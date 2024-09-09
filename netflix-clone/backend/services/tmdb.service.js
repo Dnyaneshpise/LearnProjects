@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ENV_VARS } from '../config/envVars.js';
 
 export const fetchFromTMDB = async (url) => {
 
@@ -9,19 +10,17 @@ export const fetchFromTMDB = async (url) => {
         }
       };
     
-    await axios.get(url, options);
+      try {
+        const response = await axios.get(url, options);
+    
+        if (response.status !== 200) {
+          console.error(`Failed to fetch data from ${url}: ${response.statusText}`);
+          return;
+        }
+    
+        return response.data;
 
-      if (response.status !== 200) {
-        console.error(`Failed to fetch data from ${url}`+response.statusText);
-        return;
+      } catch (error) {
+        console.error(`Error fetching data from ${url}: ${error.message}`);
       }
-
-    return response.data;
-}
-
-
-  
-  fetch('https://api.themoviedb.org/3/movie/popular?language=en-US&page=1', options)
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.error(err));
+};
